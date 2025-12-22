@@ -1,68 +1,66 @@
 import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
-// Register a new user (basic version without hashing/OAuth)
+// Register
 export const register = async (req, res) => {
+	const {name, email, password} = req.body;
 	try {
-		const { name, email, password} = req.body;
-
-		if (!name || !email || !password) {
-			return res.status(400).json({ message: 'Name, email, and password are required' });
+		if(!name || !email || !password){
+			return res.status(400).json({message: "Please fill all the fields"})
 		}
 
-		const existingUser = await User.findOne({ email });
-		if (existingUser) {
-			return res.status(409).json({ message: 'Email already in use' });
+		const userExist = await User.findOne({email});
+		if(userExist){
+			return res.status(409).json({message: "Email already used"})
 		}
+		
+		const user = await User.create({name, email, password});
 
-		const user = await User.create({ name, email, password});
+		const token = generateToken(user._id)
 		return res.status(201).json({
-			message: 'User registered successfully',
-			user: {
-				id: user._id,
-				name: user.name,
-				email: user.email,
-				avatarUrl: user.avatarUrl,
-				role: user.role,
-				provider: user.provider,
-			},
-		});
-	} catch (error) {
-		console.error('Register error:', error);
-		return res.status(500).json({ message: 'Internal server error' });
+			id: user._id,
+			name: user.name,
+			email: user.email,
+			token
+		})
+	}
+	catch(err) {
+		console.error("Register Error:", err);
+		res.status(500).json({message: "Server error"});
 	}
 };
 
-// Login with email/password (no hashing/token for now)
+// Login
 export const login = async (req, res) => {
+	const {email, password} = req.body;
 	try {
-		const { email, password } = req.body;
-
-		if (!email || !password) {
-			return res.status(400).json({ message: 'Email and password are required' });
+		if (!email || !password){
+			return res.status(400).json({message: "Please fill all the fields"})
 		}
 
-		const user = await User.findOne({ email });
-		if (!user) {
-			return res.status(401).json({ message: 'Invalid credentials' });
+		const user = await User.findOne({email});
+		if (!user || !(await user.matchPassword(password))){
+			return res.status(401).json({message: "Invalid credentials"});
 		}
 
-		if (user.password !== password) {
-			return res.status(401).json({ message: 'Invalid credentials' });
-		}
-
+		const token = generateToken(user._id)
 		return res.status(200).json({
-			message: 'Login successful',
-			user: {
-				id: user._id,
-				name: user.name,
-				email: user.email,
-				avatarUrl: user.avatarUrl,
-				role: user.role,
-				provider: user.provider,
-			},
-		});
-	} catch (error) {
-		console.error('Login error:', error);
-		return res.status(500).json({ message: 'Internal server error' });
+			id: user._id,
+			name: user.name,
+			email: user.email,
+			token
+		})
+	}
+	catch (err){
+		console.error("Login Error:", err);
+		res.status(500).json({message: "Server error"});
 	}
 };
+
+export const me = async (req,res) => {
+	res.status(200).json(req.user)
+}
+
+const generateToken = (id) => {
+	return jwt.sign({id}, process.env.JWT_SECRET, {expiresIn: "30d"})
+}
