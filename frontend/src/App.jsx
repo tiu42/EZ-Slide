@@ -4,56 +4,51 @@ import {
   Routes,
   Navigate
 } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './pages/Home';
-import Register from './pages/Register';
+
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { PresentationProvider } from './contexts/PresentationContext';
+import Test from './pages/Test';
+import Dashboard from './pages/Dashboard'
 import Login from './pages/Login';
-import Notfound from './components/Notfound';
-import { useEffect, useState } from 'react';
-import axios from 'axios'
+import Register from './pages/Register';
+import Slides from './pages/Slides';
+import ProtectedRoute from './contexts/ProtectedRoute';
+import Templates from './pages/Templates';
 
-function App() {
-  const [user, setUser] = useState(null);
-  const [error, setError] = useState('');
-  const [isloading, setIsloading] = useState(true);
+// Component riêng để xử lý loading
+function AppContent() {
+  const { isLoading, user } = useAuth();
 
-  useEffect(()=>{
-    const fetchUser = async ()=>{
-      const token = localStorage.getItem("token");
-      if (token){
-        try {
-          const res = await axios.get('/api/auth/me', {
-            headers: {Authorization: `Bearer ${token}`}
-          })
-          setUser(res.data)
-        }catch (err) {
-          setError("Failed to fetch user data");
-          localStorage.removeItem("token");
-        }
-      }
-      setIsloading(false);
-    }
-
-    fetchUser();
-  },[])
-
-  if (isloading) {
+  if (isLoading) {
     return (
-      <div>Loading...</div>
-    )
+      <div className="loading-container">
+        <div>Loading...</div>
+      </div>
+    );
   }
 
   return (
-    <Router>
-      <Navbar user={user} setUser={setUser}/>
-      <Routes>
-        <Route path='/' element={<Home user={user} error={error}/>} />
-        <Route path='/login' element={user?<Navigate to='/' /> : <Login setUser={setUser}/>} />
-        <Route path='/register' element={user?<Navigate to='/' /> :<Register setUser={setUser} />} />
-        <Route path='*' element={<Notfound/>} />
-      </Routes>
-    </Router>
-  )
+    <Routes>
+      <Route path='/' element={<Test />} />
+      <Route path='/dashboard' element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+      <Route path='/login' element={user ? <Navigate to='/dashboard' replace /> : <Login />} />
+      <Route path='/register' element={user ? <Navigate to='/dashboard' replace /> : <Register />} />
+      <Route path='/slides' element={<ProtectedRoute><Slides /></ProtectedRoute>} />
+      <Route path='/templates' element={<ProtectedRoute><Templates/></ProtectedRoute>} />
+    </Routes>
+  );
 }
 
-export default App
+function App() {
+  return (
+    <AuthProvider>
+      <PresentationProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </PresentationProvider>
+    </AuthProvider>
+  );
+}
+
+export default App;

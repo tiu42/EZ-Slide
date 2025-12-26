@@ -1,67 +1,165 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState } from 'react';
+import { Mail, Lock, ArrowRight, Layout } from 'lucide-react';
 
-const Login = ({setUser}) => {
-    const [error, setError] = useState('');
-    const [formdata, setFormdata] = useState({
-        email: "",
-        password: "",
-    });
+import Button from '../components/ui/Button';
+import InputField from '../components/ui/InputField';
+import Card from '../components/ui/Card';
+import AuthHeader from '../features/auth/components/AuthHeader';
+
+import SocialButtons from '../features/auth/components/SocialButtons';
+import Divider from '../features/auth/components/Divider';
+import Footer from '../components/ui/Footer';
+import { useAuth } from '../contexts/AuthContext';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { validateEmail, validatePassword } from '../utils/validation';
+
+const Login = () => {
+    const { login, error } = useAuth();
     const navigate = useNavigate();
 
+    // Form state
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+
+    // Validation errors
+    const [validationErrors, setValidationErrors] = useState({
+        email: '',
+        password: ''
+    });
+
+    // Track touched fields
+    const [touched, setTouched] = useState({
+        email: false,
+        password: false
+    });
+
     const handleChange = (e) => {
-        setFormdata({...formdata, [e.target.name]:e.target.value})
-    }
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+
+        // Validate on change if field was touched
+        if (touched[name]) {
+            validateField(name, value);
+        }
+    };
+
+    const handleBlur = (e) => {
+        const { name, value } = e.target;
+        setTouched(prev => ({
+            ...prev,
+            [name]: true
+        }));
+        validateField(name, value);
+    };
+
+    const validateField = (name, value) => {
+        let error = '';
+
+        if (name === 'email') {
+            error = validateEmail(value);
+        } else if (name === 'password') {
+            error = validatePassword(value);
+        }
+
+        setValidationErrors(prev => ({
+            ...prev,
+            [name]: error
+        }));
+
+        return error;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        try {
-            const res = await axios.post('/api/auth/login', formdata);
-            localStorage.setItem("token", res.data.token);
-            setUser(res.data);
-            navigate('/')
-        } catch (err) {
-            setError(err.response?.data?.message || "Login failed")
+
+        // Validate all fields
+        const emailError = validateField('email', formData.email);
+        const passwordError = validateField('password', formData.password);
+
+        // Mark all as touched
+        setTouched({ email: true, password: true });
+
+        // If there are validation errors, don't submit
+        if (emailError || passwordError) {
+            return;
         }
-    }
+
+        const result = await login(formData);
+        if (result.success) {
+            navigate('/dashboard');
+        }
+    };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md boder-gray-200">
-                <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">Login</h1>
-                {error && <p className="text-red-500 mb-4 text-sm">{error}</p>}
+        <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
+            <AuthHeader type={"login"} />
+            <main className="flex-1 flex items-center justify-center p-4">
+                <Card className="w-full max-w-md p-8 shadow-md border-slate-200/60">
 
-                <form  onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        <label className="block text-gray-600 text-sm font-medium mb-1">Email</label>
-                        <input 
-                            type="email" 
-                            name="email" 
-                            value={formdata.email} 
-                            onChange={handleChange} 
-                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 outline-none focus:border-blue-400" 
-                            placeholder="Enter your email"
-                            autoComplete="off"
-                            required
-                        />
+                    <div className="text-center mb-8">
+                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Welcome back!</h2>
+                        <p className="text-slate-500 text-sm">
+                            Enter your information to access your workspace.
+                        </p>
                     </div>
-                    <div className="mb-6">
-                        <label className="block text-gray-600 text-sm font-medium mb-1">Password</label>
-                        <input 
-                            type="password"
-                            name="password"
-                            value={formdata.password}
+
+                    {error && (
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+                            {error}
+                        </div>
+                    )}
+
+                    <form className="space-y-5" onSubmit={handleSubmit}>
+                        <InputField
+                            label="Email"
+                            type="email"
+                            name="email"
+                            value={formData.email}
                             onChange={handleChange}
-                            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-200 outline-none focus:border-blue-400" 
-                            placeholder="Enter your password"
-                            autoComplete="off"
-                            required
+                            onBlur={handleBlur}
+                            placeholder="name@example.com"
+                            icon={Mail}
+                            error={touched.email ? validationErrors.email : ''}
                         />
-                    </div>
-                    <button className="w-full bg-blue-500 text-white p-3 rounded-md font-medium hover:bg-blue-600 cursor-pointer">Login</button>
-                </form>
-            </div>
+
+                        <div className="space-y-1">
+                            <InputField
+                                label="Password"
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                placeholder="••••••••"
+                                icon={Lock}
+                                error={touched.password ? validationErrors.password : ''}
+                            />
+                            <div className="flex justify-end">
+                                <a href="/forgot-password" className="text-xs font-medium text-emerald-600 hover:text-emerald-500">
+                                    Forgot password?
+                                </a>
+                            </div>
+                        </div>
+
+                        <Button className="w-full" size="lg" type="submit">
+                            Log in
+                            <ArrowRight className="ml-2 h-4 w-4" />
+                        </Button>
+                    </form>
+
+                    <Divider text={"Or log in with"} />
+
+                    <SocialButtons />
+
+                </Card>
+            </main>
+
+            <Footer />
         </div>
     );
 };
