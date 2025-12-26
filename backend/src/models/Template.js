@@ -15,4 +15,4 @@ const TemplateSchema = new mongoose.Schema({
 
 TemplateSchema.index({ title: 'text', tags: 'text', category: 'text' });
 
-module.exports = mongoose.model("Template", TemplateSchema);
+export default mongoose.model("Template", TemplateSchema);

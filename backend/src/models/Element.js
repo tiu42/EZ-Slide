@@ -34,4 +34,4 @@ const ElementSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-module.exports = ElementSchema;
+export default ElementSchema;

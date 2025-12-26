@@ -1,32 +1,35 @@
 import express from 'express';
+import { 
+  getUserPresentations, 
+  getUserPresentationById, 
+  savePresentations, 
+  updatePresentation,
+  deletePresentations,
+  duplicatePresentation
+} from '../controllers/presentationController.js';
+import { protect } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.get('/', (_, res) => {
-  res.send('Presentation Routes Working');
-});
+// Apply authentication middleware to all routes
+router.use(protect);
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  // Logic to get a presentation by ID
-  res.status(200).json({ message: `Presentation details for ID: ${id}` });
-});
+// Get all presentations for the logged-in user
+router.get('/', getUserPresentations);
 
-router.post('/', (req, res) => {
-  // Logic to create a new presentation
-  res.status(201).json({ message: 'Presentation created successfully' });
-});
+// Get a specific presentation by ID
+router.get('/:id', getUserPresentationById);
 
-router.patch('/:id', (req, res) => {
-  const { id } = req.params;
-  // Logic to update a presentation by ID
-  res.status(200).json({ message: `Presentation with ID: ${id} updated successfully` });
-});
+// Create or update a presentation (used for saving)
+router.post('/', savePresentations);
 
-router.delete('/:id', (req, res) => {
-  const { id } = req.params;
-  // Logic to delete a presentation by ID
-  res.status(200).json({ message: `Presentation with ID: ${id} deleted successfully` });
-});
+// Update a presentation (partial update)
+router.patch('/:id', updatePresentation);
+
+// Delete a presentation
+router.delete('/:id', deletePresentations);
+
+// Duplicate a presentation
+router.post('/:id/duplicate', duplicatePresentation);
 
 export default router;

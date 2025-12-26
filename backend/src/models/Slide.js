@@ -1,4 +1,4 @@
-import mongoose, { BaseCollection } from "mongoose";
+import mongoose from "mongoose";
 import ElementSchema from "./Element.js";
 
 // 1 - Create Slide Schema
@@ -18,4 +18,4 @@ const SlideSchema = new mongoose.Schema({
     thumbnailUrl: { type: String, default: '' }
 }, { timestamps: true });
 
-module.exports = mongoose.model("Slide", SlideSchema);
+export default mongoose.model("Slide", SlideSchema);

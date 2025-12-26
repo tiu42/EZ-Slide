@@ -16,4 +16,4 @@ const PresentationSchema = new mongoose.Schema({
     thumbnailUrl: { type: String, default: '' },
 }, { timestamps: true });
 
-module.exports = mongoose.model("Presentation", PresentationSchema);
+export default mongoose.model("Presentation", PresentationSchema);

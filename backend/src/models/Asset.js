@@ -27,12 +27,12 @@ const AssetSchema = new mongoose.Schema({
   },
 
   // Phân loại để dễ filter trong thư viện ảnh
-  type: { 
-    type: String, 
-    enum: ['image', 'video', 'font', 'audio'], 
-    default: 'image' 
+  type: {
+    type: String,
+    enum: ['image', 'video', 'font', 'audio'],
+    default: 'image'
   }
 
 }, { timestamps: true });
 
-module.exports = mongoose.model('Asset', AssetSchema);
+export default mongoose.model('Asset', AssetSchema);
