@@ -9,14 +9,14 @@ const Button = ({
     isLoading = false,
     ...props
 }) => {
-    const baseStyle = "inline-flex items-center justify-center font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none rounded-lg cursor-pointer";
+    const baseStyle = "inline-flex items-center justify-center font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-transparent disabled:opacity-50 disabled:pointer-events-none rounded-lg cursor-pointer";
 
     const variants = {
-        primary: "bg-emerald-500 text-white hover:bg-emerald-600 focus:ring-emerald-500 shadow-sm",
-        secondary: "bg-slate-100 text-slate-900 hover:bg-slate-200 focus:ring-slate-500 border border-slate-200",
-        outline: "bg-transparent border-2 border-slate-300 text-slate-700 hover:border-emerald-500 hover:text-emerald-600",
-        danger: "bg-red-50 text-red-600 hover:bg-red-100 border border-red-200 focus:ring-red-500",
-        ghost: "bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+        primary: "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600 focus:ring-purple-500 shadow-lg shadow-purple-500/30",
+        secondary: "bg-white/10 text-white hover:bg-white/20 focus:ring-purple-500 border border-white/20 backdrop-blur-sm",
+        outline: "bg-transparent border-2 border-purple-400/50 text-purple-300 hover:border-purple-400 hover:bg-purple-500/10",
+        danger: "bg-red-500/10 text-red-400 hover:bg-red-500/20 border border-red-500/30 focus:ring-red-500",
+        ghost: "bg-transparent text-gray-300 hover:bg-white/10 hover:text-white"
     };
 
     const sizes = {

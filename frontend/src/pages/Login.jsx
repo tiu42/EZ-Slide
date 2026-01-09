@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, Lock, ArrowRight, Layout } from 'lucide-react';
+import { Mail, Lock, ArrowRight } from 'lucide-react';
 
 import Button from '../components/ui/Button';
 import InputField from '../components/ui/InputField';
@@ -9,8 +9,9 @@ import AuthHeader from '../features/auth/components/AuthHeader';
 import SocialButtons from '../features/auth/components/SocialButtons';
 import Divider from '../features/auth/components/Divider';
 import Footer from '../components/ui/Footer';
+import Logo from '../components/ui/Logo';
 import { useAuth } from '../contexts/AuthContext';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import { validateEmail, validatePassword } from '../utils/validation';
 
 const Login = () => {
@@ -96,70 +97,89 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-            <AuthHeader type={"login"} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col font-sans">
+            {/* Logo/Brand */}
+            <Logo className="absolute top-6 left-6 z-10" size="md" />
+
             <main className="flex-1 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md p-8 shadow-md border-slate-200/60">
+                <div className="w-full max-w-md">
+                    {/* Glassmorphism Card */}
+                    <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-8">
 
-                    <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Welcome back!</h2>
-                        <p className="text-slate-500 text-sm">
-                            Enter your information to access your workspace.
-                        </p>
-                    </div>
-
-                    {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                            {error}
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-white mb-2">Chào mừng trở lại!</h2>
+                            <p className="text-gray-300 text-sm">
+                                Đăng nhập để truy cập workspace của bạn
+                            </p>
                         </div>
-                    )}
 
-                    <form className="space-y-5" onSubmit={handleSubmit}>
-                        <InputField
-                            label="Email"
-                            type="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            placeholder="name@example.com"
-                            icon={Mail}
-                            error={touched.email ? validationErrors.email : ''}
-                        />
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm backdrop-blur-sm">
+                                {error}
+                            </div>
+                        )}
 
-                        <div className="space-y-1">
+                        <form className="space-y-5" onSubmit={handleSubmit}>
                             <InputField
-                                label="Password"
-                                type="password"
-                                name="password"
-                                value={formData.password}
+                                label="Email"
+                                type="email"
+                                name="email"
+                                value={formData.email}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
-                                placeholder="••••••••"
-                                icon={Lock}
-                                error={touched.password ? validationErrors.password : ''}
+                                placeholder="name@example.com"
+                                icon={Mail}
+                                error={touched.email ? validationErrors.email : ''}
                             />
-                            <div className="flex justify-end">
-                                <a href="/forgot-password" className="text-xs font-medium text-emerald-600 hover:text-emerald-500">
-                                    Forgot password?
-                                </a>
+
+                            <div className="space-y-1">
+                                <InputField
+                                    label="Mật khẩu"
+                                    type="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    placeholder="••••••••"
+                                    icon={Lock}
+                                    error={touched.password ? validationErrors.password : ''}
+                                />
+                                {/* <div className="flex justify-end">
+                                    <a href="/forgot-password" className="text-xs font-medium text-purple-400 hover:text-purple-300 transition-colors">
+                                        Quên mật khẩu?
+                                    </a>
+                                </div> */}
                             </div>
+
+                            <Button
+                                className="w-full bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/30"
+                                size="lg"
+                                type="submit"
+                            >
+                                Đăng nhập
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </form>
+
+                        {/* <Divider text={"Hoặc đăng nhập với"} />
+
+                        <SocialButtons /> */}
+
+                        <div className="mt-6 text-center">
+                            <p className="text-gray-400 text-sm">
+                                Chưa có tài khoản?{' '}
+                                <Link to="/register" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
+                                    Đăng ký ngay
+                                </Link>
+                            </p>
                         </div>
-
-                        <Button className="w-full" size="lg" type="submit">
-                            Log in
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </form>
-
-                    <Divider text={"Or log in with"} />
-
-                    <SocialButtons />
-
-                </Card>
+                    </div>
+                </div>
             </main>
 
-            <Footer />
+            <footer className="py-6 text-center text-gray-500 text-sm">
+                <p>© 2026 Ez-Slide. Tạo slide chuyên nghiệp, dễ dàng hơn bao giờ hết.</p>
+            </footer>
         </div>
     );
 };

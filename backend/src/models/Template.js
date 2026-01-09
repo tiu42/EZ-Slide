@@ -1,16 +1,23 @@
 import mongoose from "mongoose";
-import ElementSchema from "./Element.js";
 
 const TemplateSchema = new mongoose.Schema({
+    presentationId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Presentation',
+        required: true,
+        index: true
+    },
     title: { type: String, required: true, default: 'Untitled Template' },
+    description: { type: String, default: '' },
     thumbnailUrl: { type: String, default: '' },
+    slidePreviews: [{ type: String }], // Array of slide thumbnail URLs
     tags: [{ type: String }],
     category: { type: String, default: 'General' },
-    background: {
-        type: String,
-        value: { type: String, default: '#FFFFFF' },
-    },
-    elements: [ElementSchema],
+    isPublished: { type: Boolean, default: true },
+    creatorId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User'
+    }
 }, { timestamps: true });
 
 TemplateSchema.index({ title: 'text', tags: 'text', category: 'text' });

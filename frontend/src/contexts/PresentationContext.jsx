@@ -46,12 +46,12 @@ export const PresentationProvider = ({ children }) => {
 
         try {
             const res = await axios.post('/api/presentations', data, {
-                headers: { 
+                headers: {
                     Authorization: `Bearer ${token}`,
                     'Content-Type': 'application/json'
                 }
             });
-            
+
             const newPresentation = res.data?.data;
             setPresentations(prev => [newPresentation, ...prev]);
             return newPresentation;
@@ -70,9 +70,9 @@ export const PresentationProvider = ({ children }) => {
             const res = await axios.patch(`/api/presentations/${id}`, updates, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             const updatedPresentation = res.data?.data;
-            setPresentations(prev => 
+            setPresentations(prev =>
                 prev.map(p => p._id === id ? updatedPresentation : p)
             );
             return updatedPresentation;
@@ -91,7 +91,7 @@ export const PresentationProvider = ({ children }) => {
             await axios.delete(`/api/presentations/${id}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             setPresentations(prev => prev.filter(p => p._id !== id));
             return true;
         } catch (err) {
@@ -109,7 +109,7 @@ export const PresentationProvider = ({ children }) => {
             const res = await axios.post(`/api/presentations/${id}/duplicate`, {}, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            
+
             const duplicatedPresentation = res.data?.data;
             setPresentations(prev => [duplicatedPresentation, ...prev]);
             return duplicatedPresentation;
@@ -142,6 +142,31 @@ export const PresentationProvider = ({ children }) => {
         } else {
             setPresentations([]);
         }
+    }, [user]);
+
+    // Refresh presentations when tab becomes visible (for real-time updates)
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (!document.hidden && user) {
+                fetchPresentations();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, [user]);
+
+    // Optional: Periodic polling for real-time updates (every 30 seconds)
+    useEffect(() => {
+        if (!user) return;
+
+        const interval = setInterval(() => {
+            fetchPresentations();
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(interval);
     }, [user]);
 
     const value = {

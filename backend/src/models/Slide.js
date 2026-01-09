@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import ElementSchema from "./Element.js";
 
 // 1 - Create Slide Schema
 const SlideSchema = new mongoose.Schema({
@@ -9,13 +8,18 @@ const SlideSchema = new mongoose.Schema({
         required: true,
         index: true
     },
-    background: {
-        type: String,
-        value: { type: String, default: '#FFFFFF' },
+    width: { type: Number, default: 1920 },
+    height: { type: Number, default: 1080 },
+    elements: { type: Array, default: [] },
+    thumbnail: { type: String, default: '' },
+    background: { type: String, default: '#ffffff' },
+    backgroundImage: { type: String, default: '' },
+    backgroundImageMeta: {
+        width: { type: Number, default: null },
+        height: { type: Number, default: null }
     },
-    elements: [ElementSchema],
+    backgroundImageFit: { type: String, default: 'cover' },
     notes: { type: String, default: '' },
-    thumbnailUrl: { type: String, default: '' }
 }, { timestamps: true });
 
 export default mongoose.model("Slide", SlideSchema);

@@ -94,6 +94,14 @@ export const savePresentations = async (req, res) => {
                 slideOrder: slideOrder || [],
                 thumbnailUrl: thumbnailUrl || ''
             });
+            
+            if (newPresentation.slideOrder.length < 1){
+                const firstSlide = new Slide({
+                    presentationId: newPresentation._id,
+                })
+                await firstSlide.save()
+                newPresentation.slideOrder[0] = firstSlide._id
+            }
 
             await newPresentation.save();
 
@@ -170,7 +178,6 @@ export const deletePresentations = async (req, res) => {
             });
         }
 
-        // Optional: Delete associated slides
         if (presentation.slideOrder && presentation.slideOrder.length > 0) {
             await Slide.deleteMany({ _id: { $in: presentation.slideOrder } });
         }

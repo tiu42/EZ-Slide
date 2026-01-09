@@ -8,8 +8,9 @@ import AuthHeader from '../features/auth/components/AuthHeader';
 import SocialButtons from '../features/auth/components/SocialButtons';
 import Divider from '../features/auth/components/Divider';
 import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import Footer from '../components/ui/Footer';
+import Logo from '../components/ui/Logo';
 import { validateEmail, validatePassword, validateName } from '../utils/validation';
 
 const Register = () => {
@@ -101,74 +102,95 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
-            <AuthHeader type={"register"} />
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col font-sans">
+            {/* Logo/Brand */}
+            <Logo className="absolute top-6 left-6 z-10" size="md" />
+
             <main className="flex-1 flex items-center justify-center p-4">
-                <Card className="w-full max-w-md p-8 shadow-md border-slate-200/60">
-                    <div className="text-center mb-8">
-                        <h2 className="text-2xl font-bold text-slate-800 mb-2">Create new account</h2>
-                        <p className="text-slate-500 text-sm">
-                            Start creating professional presentations with AI for free.
-                        </p>
-                    </div>
+                <div className="w-full max-w-md">
+                    {/* Glassmorphism Card */}
+                    <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl p-8">
 
-                    {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                            {error}
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-white mb-2">Tạo tài khoản mới</h2>
+                            <p className="text-gray-300 text-sm">
+                                Bắt đầu tạo bài thuyết trình chuyên nghiệp miễn phí
+                            </p>
                         </div>
-                    )}
 
-                    <form className="space-y-5" onSubmit={handleSubmit}>
+                        {error && (
+                            <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-red-400 text-sm backdrop-blur-sm">
+                                {error}
+                            </div>
+                        )}
 
-                        <InputField
-                            label="Display name"
-                            placeholder="e.g. John Doe"
-                            icon={User}
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={touched.name ? validationErrors.name : ''}
-                        />
+                        <form className="space-y-5" onSubmit={handleSubmit}>
 
-                        <InputField
-                            label="Email"
-                            type="email"
-                            placeholder="name@example.com"
-                            icon={Mail}
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={touched.email ? validationErrors.email : ''}
-                        />
+                            <InputField
+                                label="Tên hiển thị"
+                                placeholder="Ví dụ: Nguyễn Văn A"
+                                icon={User}
+                                name="name"
+                                value={formData.name}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.name ? validationErrors.name : ''}
+                            />
 
-                        <InputField
-                            label="Password"
-                            type="password"
-                            placeholder="Create a strong password"
-                            icon={Lock}
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={touched.password ? validationErrors.password : ''}
-                        />
+                            <InputField
+                                label="Email"
+                                type="email"
+                                placeholder="name@example.com"
+                                icon={Mail}
+                                name="email"
+                                value={formData.email}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.email ? validationErrors.email : ''}
+                            />
 
-                        <Button className="w-full" size="lg" type="submit">
-                            Sign up
-                            <ArrowRight className="ml-2 h-4 w-4" />
-                        </Button>
-                    </form>
+                            <InputField
+                                label="Mật khẩu"
+                                type="password"
+                                placeholder="Tạo mật khẩu mạnh"
+                                icon={Lock}
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                error={touched.password ? validationErrors.password : ''}
+                            />
 
-                    {/* Divider */}
-                    <Divider text={"Or sign up with"} />
+                            <Button
+                                className="w-full bg-gradient-to-r from-purple-400 to-pink-400 hover:from-purple-500 hover:to-pink-500 text-white shadow-lg shadow-purple-500/30"
+                                size="lg"
+                                type="submit"
+                            >
+                                Đăng ký
+                                <ArrowRight className="ml-2 h-4 w-4" />
+                            </Button>
+                        </form>
 
-                    <SocialButtons />
+                        {/* Divider */}
+                        {/* <Divider text={"Hoặc đăng ký với"} />
 
-                </Card>
+                        <SocialButtons /> */}
+
+                        <div className="mt-6 text-center">
+                            <p className="text-gray-400 text-sm">
+                                Đã có tài khoản?{' '}
+                                <Link to="/login" className="text-purple-400 hover:text-purple-300 font-medium transition-colors">
+                                    Đăng nhập ngay
+                                </Link>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </main>
-            <Footer />
+
+            <footer className="py-6 text-center text-gray-500 text-sm">
+                <p>© 2026 Ez-Slide. Tạo slide chuyên nghiệp, dễ dàng hơn bao giờ hết.</p>
+            </footer>
         </div>
     );
 };
