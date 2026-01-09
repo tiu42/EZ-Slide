@@ -10,17 +10,45 @@ const AISlide = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [error, setError] = useState('');
 
-    const handleGenerate = () => {
+    const handleGenerate = async () => {
         if (!topic.trim()) {
             setError('Vui lòng nhập chủ đề để tạo slide');
             return;
         }
         setIsGenerating(true);
-        // TODO: Implement AI generation logic
-        console.log('Generating slides...', { topic, slideCount, language, tone });
-        setTimeout(() => {
+        setError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/api/ai/generate-slides', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    topic,
+                    slideCount: parseInt(slideCount),
+                    language,
+                    tone
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.error || 'Failed to generate slides');
+            }
+
+            // Open editor in new tab
+            window.open(`/design/${data.presentationId}`, '_blank');
             setIsGenerating(false);
-        }, 2000);
+
+        } catch (err) {
+            console.error('Generation error:', err);
+            setError(err.message || 'Có lỗi xảy ra khi tạo slide. Vui lòng thử lại.');
+            setIsGenerating(false);
+        }
     };
 
     return (

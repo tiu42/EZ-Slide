@@ -16,6 +16,7 @@ app.use('/api/auth', (await import('./routes/authRoutes.js')).default);
 app.use('/api/presentations', (await import('./routes/presentationRoutes.js')).default);
 app.use('/api/slides', (await import('./routes/slideRoutes.js')).default);
 app.use('/api/templates', (await import('./routes/templateRoutes.js')).default);
+app.use('/api/ai', (await import('./routes/aiRoutes.js')).default);
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
